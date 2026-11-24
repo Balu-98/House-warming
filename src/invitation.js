@@ -32,8 +32,10 @@ export const invitation = {
     address: "",
     // Exact pin used for the embedded map (latitude,longitude)
     mapsQuery: "9.2395273,76.4854807",
-    // Link opened by the "Open in Google Maps" button
-    mapsUrl: "https://maps.app.goo.gl/MtQQ8mdFVyET95Yg6",
+    // Link opened by the map and the "Open in Google Maps" button.
+    // Uses Google's universal Maps URL (opens the Maps app on Android/iPhone, the website on laptops).
+    // Short maps.app.goo.gl links fail on Android in WhatsApp/in-app browsers, so don't use them here.
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=9.2395273%2C76.4854807",
   },
 
   // Phone numbers guests can tap to call
