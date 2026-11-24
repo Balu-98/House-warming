@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 export const invitation = {
-  host: "Mr. Nirmal Krishnan",
+  host: "Nirmal Krishnan",
   houseName: "Akshaya",
   eventLabel: "Griha Pravesham",
 
@@ -46,6 +46,10 @@ export const invitation = {
   // The clear original is kept in /private-photos, which is NOT published.
   introImage: "/photos/house-blur.jpg",
   heroImage: "/photos/house-blur.jpg",
+
+  // Artwork shown inside the hero arch (Lord Krishna with flute). Set to "" to show the warm glow instead.
+  archImage: "/photos/krishna-arch.jpg",
+
   // Photo slideshow — empty on purpose so the house stays a surprise (section is hidden when empty).
   // e.g. { src: "/photos/family.jpg", title: "Our Family", caption: "..." }
   gallery: [],

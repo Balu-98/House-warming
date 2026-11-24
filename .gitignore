@@ -1,0 +1,6 @@
+node_modules
+dist
+
+# Clear house photo (surprise) — never commit
+private-photos/
+house.jpg

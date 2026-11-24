@@ -118,22 +118,88 @@ function downloadIcs() {
   URL.revokeObjectURL(url);
 }
 
+/* ───────────── Decorative motifs ───────────── */
+
+/* Thoranam — mango-leaf & marigold garland hung over a doorway for Griha Pravesham */
+function Thoranam({ className = "", count = 13 }) {
+  const W = 400, sag = 22, top = 6;
+  const yAt = (x) => { const t = x / W; return (1 - t) * (1 - t) * top + 2 * (1 - t) * t * (top + sag * 2) + t * t * top; };
+  const step = (W - 28) / (count - 1);
+  const items = Array.from({ length: count }, (_, i) => 14 + i * step);
+  return (
+    <svg className={`thoranam ${className}`} viewBox="0 0 400 74" preserveAspectRatio="xMidYMin meet" aria-hidden="true">
+      <defs>
+        <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6f8a3a" />
+          <stop offset="100%" stopColor="#3f5a22" />
+        </linearGradient>
+      </defs>
+      <path d={`M0 ${top} Q${W / 2} ${top + sag * 2} ${W} ${top}`} fill="none" stroke="#8c6a26" strokeWidth="1.4" />
+      {items.map((x, i) => {
+        const y = yAt(x);
+        const len = i % 2 ? 30 : 38;
+        const tilt = ((i % 3) - 1) * 4;
+        return (
+          <g key={i} transform={`translate(${x} ${y}) rotate(${tilt})`}>
+            <path d={`M0 0 C7 ${len * 0.28} 7 ${len * 0.72} 0 ${len} C-7 ${len * 0.72} -7 ${len * 0.28} 0 0Z`} fill="url(#leaf)" />
+            <path d={`M0 2 L0 ${len - 3}`} stroke="#a9bd72" strokeWidth=".7" opacity=".7" />
+          </g>
+        );
+      })}
+      {items.slice(0, -1).map((x, i) => {
+        const mx = x + step / 2;
+        const my = yAt(mx) + 2;
+        return (
+          <g key={`m${i}`}>
+            <circle cx={mx} cy={my} r="5.2" fill="#e39a2d" />
+            <circle cx={mx} cy={my} r="2.6" fill="#f4c24f" />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/* Kolam-style divider: hairlines with a looped dot motif */
+function Ornament({ className = "" }) {
+  return (
+    <svg className={`ornament ${className}`} viewBox="0 0 140 22" aria-hidden="true">
+      <path d="M0 11h46M94 11h46" stroke="currentColor" strokeWidth="1" />
+      <path d="M70 1.5C77 6 77 16 70 20.5 63 16 63 6 70 1.5Z" fill="none" stroke="currentColor" strokeWidth="1" />
+      <path d="M57 11C62 4 78 4 83 11 78 18 62 18 57 11Z" fill="none" stroke="currentColor" strokeWidth="1" />
+      <circle cx="70" cy="11" r="1.8" fill="currentColor" />
+      <circle cx="51" cy="11" r="1.3" fill="currentColor" />
+      <circle cx="89" cy="11" r="1.3" fill="currentColor" />
+    </svg>
+  );
+}
+
 /* ───────────── Sections ───────────── */
 function Intro({ onEnter, leaving }) {
   return (
     <div className={`intro ${leaving ? "leaving" : ""}`}>
       <SafeImg src={inv.introImage} alt="" className="bg-img blurred" fetchpriority="high" />
       <div className="intro-shade" />
-      <div className="intro-card">
-        <div className="inner-border" />
-        <Emblem className="emblem emblem-md" />
-        <span className="eyebrow gold-dark">{inv.eventLabel}</span>
-        <p className="intro-sub">You are invited to</p>
-        <h1 className="house-title">{inv.houseName}</h1>
-        <div className="rule" />
-        <button className="btn-primary" onClick={onEnter}>
-          Open Invitation <span className="nudge">→</span>
-        </button>
+
+      <div className="intro-door">
+        <Thoranam className="intro-thoranam" count={15} />
+        <div className="door-frame">
+          <div className="door-light" />
+          <div className="door door-l" aria-hidden="true"><i className="knob" /></div>
+          <div className="door door-r" aria-hidden="true"><i className="knob" /></div>
+
+          <div className="intro-card">
+            <Emblem className="emblem emblem-md" />
+            <span className="eyebrow gold-dark">{inv.eventLabel}</span>
+            <p className="intro-sub">You are invited to</p>
+            <h1 className="house-title">{inv.houseName}</h1>
+            <Ornament className="intro-ornament" />
+            <button className="btn-primary" onClick={onEnter}>
+              Open Invitation <span className="nudge">→</span>
+            </button>
+          </div>
+        </div>
+        <div className="door-step" />
       </div>
     </div>
   );
@@ -142,30 +208,32 @@ function Intro({ onEnter, leaving }) {
 function Hero() {
   return (
     <section className="hero">
-      <SafeImg src={inv.heroImage} alt="" className="bg-img blurred" />
-      <div className="hero-shade" />
-      <div className="hero-content rise">
-        <Emblem className="emblem emblem-lg float" />
-        <span className="eyebrow gold">{inv.eventLabel} · House Warming</span>
-        <h1 className="hero-name">{inv.houseName}</h1>
-        <div className="rule light" />
-        <p className="hero-date">{dateLine}</p>
-        <button className="btn-primary" onClick={() => document.getElementById("invitation")?.scrollIntoView({ behavior: "smooth" })}>
-          View Invitation ↓
-        </button>
-      </div>
-    </section>
-  );
-}
+      <div className="hero-inner">
+        <div className="hero-text rise">
+          <span className="eyebrow gold">{inv.eventLabel} · House Warming</span>
+          <h1 className="hero-name">{inv.houseName}</h1>
+          <div className="rule light" />
+          <p className="hero-date">{dateLine}</p>
+          <button className="btn-primary" onClick={() => document.getElementById("invitation")?.scrollIntoView({ behavior: "smooth" })}>
+            View Invitation ↓
+          </button>
+        </div>
 
-/* Decorative divider: hairlines with a brass diamond */
-function Ornament({ className = "" }) {
-  return (
-    <svg className={`ornament ${className}`} viewBox="0 0 120 12" aria-hidden="true">
-      <path d="M0 6h48M72 6h48" stroke="currentColor" strokeWidth="1" />
-      <path d="M60 1l5 5-5 5-5-5z" fill="none" stroke="currentColor" strokeWidth="1" />
-      <circle cx="60" cy="6" r="1.6" fill="currentColor" />
-    </svg>
+        <div className={`hero-door rise-late ${inv.archImage ? "has-art" : ""}`}>
+          <Thoranam className="hero-thoranam" />
+          <div className="doorway">
+            {inv.archImage
+              ? <SafeImg src={inv.archImage} alt="Lord Krishna playing the flute" className="arch-art" />
+              : <SafeImg src={inv.heroImage} alt="" className="bg-img blurred" />}
+            <div className="doorway-glow" />
+          </div>
+          <div className="threshold">
+            <Emblem className="emblem emblem-lg float" />
+          </div>
+        </div>
+      </div>
+      <div className="kasavu kasavu-bottom" aria-hidden="true" />
+    </section>
   );
 }
 
@@ -183,6 +251,7 @@ function InvitationCard() {
   return (
     <section id="invitation" className="section">
       <div className="card big-card reveal">
+        <div className="kasavu kasavu-card-top" aria-hidden="true" />
         <div className="inner-border" />
         <Emblem className="emblem emblem-sm card-emblem" />
         <span className="eyebrow gold-dark">{inv.eventLabel}</span>
@@ -195,6 +264,7 @@ function InvitationCard() {
           {inv.date.malayalamDate && <p className="date-ml">{inv.date.malayalamDate}</p>}
         </div>
         <p className="quote">“{inv.quote}”</p>
+        <div className="kasavu kasavu-card-bottom" aria-hidden="true" />
       </div>
     </section>
   );
@@ -423,6 +493,7 @@ ${url}`;
 function Footer() {
   return (
     <footer className="footer">
+      <div className="kasavu kasavu-footer" aria-hidden="true" />
       <Emblem className="emblem emblem-sm" />
       <h3>{inv.houseName}</h3>
       <p className="footer-meta">{dateLine}</p>
@@ -463,7 +534,7 @@ export default function App() {
   const enter = () => {
     setLeaving(true);
     play();
-    setTimeout(() => setEntered(true), 800);
+    setTimeout(() => setEntered(true), 2300); // doors swing open, then the intro fades
   };
 
   useEffect(() => {
